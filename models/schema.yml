@@ -72,16 +72,24 @@ models:
       - name: order_id
         data_type: integer
         data_tests:
-          - unique
-          - not_null
+          - unique:
+              config:
+                tags: ['critical']
+          - not_null:
+              config:
+                tags: ['critical']
         description: This is a unique identifier for an order
 
       - name: customer_id
         data_type: integer
         description: Foreign key to the customers table
         data_tests:
-          - not_null
+          - not_null:
+              config:
+                tags: ['critical']
           - relationships:
+              config:
+                tags: ['critical', 'referential_integrity']
               arguments:
                 to: ref('customers')
                 field: customer_id
