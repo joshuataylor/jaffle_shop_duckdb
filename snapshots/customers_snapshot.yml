@@ -1,0 +1,47 @@
+version: 2
+
+# Demonstrates the timestamp snapshot strategy as a counterpart to the
+# check strategy used by orders_snapshot.yml. The timestamp strategy
+# uses an updated_at column to detect changes — efficient when the
+# source tracks modification time, vs check which compares column values.
+
+snapshots:
+  - name: customers_snapshot
+    description: >
+      Tracks customer-level changes over time using SCD Type 2 with
+      the timestamp strategy. Each row represents a historical state
+      of a customer, with versioning driven by the most_recent_order
+      timestamp column.
+    relation: ref('customers', v=1)
+    config:
+      schema: snapshots
+      unique_key: customer_id
+      strategy: timestamp
+      updated_at: most_recent_order
+      hard_deletes: ignore
+    columns:
+      - name: customer_key
+        description: Surrogate key inherited from the customers mart.
+      - name: customer_id
+        description: Primary key — unique customer identifier.
+      - name: first_name
+        description: Customer's first name.
+      - name: last_name
+        description: Customer's last name.
+      - name: first_order
+        description: Date of the customer's first order.
+      - name: most_recent_order
+        description: >
+          Timestamp of the customer's most recent order. Used by the
+          timestamp strategy to detect changes — when this advances,
+          a new snapshot row is inserted.
+      - name: number_of_orders
+        description: Total order count at snapshot time.
+      - name: customer_lifetime_value
+        description: CLV at snapshot time.
+      - name: dbt_valid_from
+        description: Timestamp when this snapshot row became valid.
+      - name: dbt_valid_to
+        description: >
+          Timestamp when this snapshot row was superseded.
+          NULL for the current record.
