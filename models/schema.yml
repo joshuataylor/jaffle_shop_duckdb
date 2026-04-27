@@ -5,8 +5,10 @@ models:
     description: This table has basic information about a customer, as well as some derived facts based on a customer's orders
     config:
       tags: ['marts']
+      group: marts
       grants:
         select: ['reporter', 'analytics_reader']
+    access: public
     meta:
       owner: analytics
       contains_pii: true
@@ -66,8 +68,10 @@ models:
     description: This table has basic information about orders, as well as some derived facts based on payments
     config:
       tags: ['marts']
+      group: marts
       contract:
         enforced: true
+    access: public
     meta:
       owner: analytics
     columns:
@@ -170,6 +174,8 @@ models:
     description: Incremental summary of order payments. Demonstrates incremental materialization and ephemeral model dependency.
     config:
       tags: ['marts']
+      group: marts
+    access: public
     columns:
       - name: order_id
         description: Primary key — unique order identifier.
@@ -193,6 +199,8 @@ models:
     description: Date dimension table generated using dbt_utils.date_spine. Provides one row per day for reporting and gap analysis.
     config:
       tags: ['utility']
+      group: utility
+    access: public
     columns:
       - name: date_day
         description: Calendar date.

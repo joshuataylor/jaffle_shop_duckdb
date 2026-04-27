@@ -5,6 +5,8 @@ models:
     description: Cleaned customer data with renamed columns from the raw_customers seed.
     config:
       tags: ['staging']
+      group: staging
+    access: protected
     columns:
       - name: customer_id
         description: Primary key — renamed from `id` in raw source.
@@ -24,6 +26,8 @@ models:
     description: Cleaned order data with renamed columns from the raw_orders seed. Applies dev data limiting.
     config:
       tags: ['staging']
+      group: staging
+    access: protected
     columns:
       - name: order_id
         description: Primary key — renamed from `id` in raw source.
@@ -45,6 +49,8 @@ models:
     description: Cleaned payment data with renamed columns and amount converted from cents to dollars.
     config:
       tags: ['staging']
+      group: staging
+    access: protected
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -73,6 +79,9 @@ models:
     description: >
       Ephemeral intermediate model joining orders with payment totals.
       Injected as a CTE — never materialized in the warehouse.
+    config:
+      group: staging
+    access: protected
     docs:
       show: false
     columns:

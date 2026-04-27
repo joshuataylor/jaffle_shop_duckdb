@@ -1,0 +1,32 @@
+version: 2
+
+# Groups define logical ownership boundaries for models. Combined with the
+# access modifier (private / protected / public) on each model, they let
+# dbt enforce model-level governance: e.g. private models can only be
+# referenced by other models in the same group.
+
+groups:
+  - name: staging
+    description: >
+      Raw-to-clean transformations. Models in this group are an
+      implementation detail and should not be referenced by downstream
+      consumers outside the project.
+    owner:
+      name: Analytics Engineering
+      email: analytics-eng@jaffle.example
+
+  - name: marts
+    description: >
+      Business-facing fact and dimension tables. Models in this group
+      form the public contract surface of the warehouse.
+    owner:
+      name: Analytics
+      email: analytics@jaffle.example
+
+  - name: utility
+    description: >
+      Utility/dimension helpers (date spines, calendars). Reusable
+      across the project.
+    owner:
+      name: Analytics Engineering
+      email: analytics-eng@jaffle.example
