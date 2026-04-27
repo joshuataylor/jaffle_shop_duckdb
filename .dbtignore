@@ -1,0 +1,13 @@
+# dbt parser ignore patterns.
+# Files matching these patterns will not be parsed by dbt, even if they
+# live under model-paths, macro-paths, etc.
+
+# Editor / OS noise.
+.DS_Store
+
+# Claude / agent tooling.
+.claude/
+
+# Project-level docs that are not dbt resources.
+JAFFLESHOP_TODO.md
+JAFFLESHOP_DUCKDB_DATAMANCER_CHANGES.md
