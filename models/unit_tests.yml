@@ -6,6 +6,8 @@ unit_tests:
       Verify that customer_lifetime_value is correctly calculated as the
       sum of all payment amounts for a customer's orders.
     model: customers
+    versions:
+      include: [1]
     given:
       - input: ref('stg_customers')
         rows:
@@ -32,6 +34,8 @@ unit_tests:
     description: >
       Verify that a customer with no orders has null aggregates.
     model: customers
+    versions:
+      include: [1]
     given:
       - input: ref('stg_customers')
         rows:

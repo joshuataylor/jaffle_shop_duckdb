@@ -3,7 +3,7 @@
 -- that benefit from Jinja templating and ref().
 
 with customers as (
-    select * from {{ ref('customers') }}
+    select * from {{ ref('customers', v=1) }}
 ),
 
 orders as (

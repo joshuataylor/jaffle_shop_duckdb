@@ -1,8 +1,7 @@
 -- Every customer in the customers table should have at least one order.
 select
-    c.customer_id
-from {{ ref('customers') }} c
-left join {{ ref('orders') }} o
-    on c.customer_id = o.customer_id
-where o.order_id is null
-    and c.number_of_orders > 0
+    customers.customer_id
+from {{ ref('customers', v=1) }} as customers
+left join {{ ref('orders') }} as orders on orders.customer_id = customers.customer_id
+where orders.order_id is null
+and customers.number_of_orders > 0

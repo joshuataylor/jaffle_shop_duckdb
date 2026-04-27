@@ -12,6 +12,7 @@ models:
     meta:
       owner: analytics
       contains_pii: true
+    latest_version: 1
 
     data_tests:
       - dbt_utils.unique_combination_of_columns:
@@ -64,6 +65,36 @@ models:
               arguments:
                 expression: ">= 0 or customer_lifetime_value is null"
 
+      - name: customer_status
+        description: >
+          Derived status: 'active' if the customer ordered in the last
+          90 days, 'churned' if longer ago, 'never_ordered' otherwise.
+          Only present in v2.
+
+    versions:
+      - v: 1
+        # v1 is the current latest — uses the default file name
+        # (customers.sql) with no suffix. Excludes the v2-only column.
+        # Aliased as "customers" so the latest-version DB relation is
+        # addressable both as customers_v1 (versioned) and as customers
+        # (the dbt-recommended "latest version" alias pattern).
+        defined_in: customers
+        config:
+          alias: customers
+        columns:
+          - include: '*'
+            exclude: ['customer_status']
+        # Slate v1 for deprecation 90 days from now to give downstream
+        # consumers a known migration window.
+        deprecation_date: 2026-07-26 00:00:00+00:00
+
+      - v: 2
+        # v2 is "prerelease" — adds customer_status. Defined in
+        # customers_v2.sql. Will become latest after the migration
+        # window for v1 closes.
+        columns:
+          - include: '*'
+
   - name: orders
     description: This table has basic information about orders, as well as some derived facts based on payments
     config:
@@ -106,7 +137,7 @@ models:
               config:
                 tags: ['critical', 'referential_integrity']
               arguments:
-                to: ref('customers')
+                to: ref('customers', v=1)
                 field: customer_id
 
       - name: order_date

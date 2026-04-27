@@ -11,7 +11,7 @@ exposures:
       name: Analytics Team
       email: analytics@jaffleshop.com
     depends_on:
-      - ref('customers')
+      - ref('customers', v=1)
       - ref('orders')
     tags: ['reporting']
 
@@ -25,6 +25,6 @@ exposures:
       name: Analytics Team
       email: analytics@jaffleshop.com
     depends_on:
-      - ref('customers')
+      - ref('customers', v=1)
       - ref('orders')
     tags: ['reporting']
