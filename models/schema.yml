@@ -246,3 +246,61 @@ models:
         description: Day of month extracted from the date.
       - name: day_of_week
         description: Day of week number.
+
+# Unit tests live in the same YAML file as their target model to avoid
+# parse-order issues on filesystems that don't iterate lexicographically
+# (e.g. ext4). Pinning to v1 prevents v2 (which has an extra column) from
+# implicitly inheriting these tests.
+unit_tests:
+  - name: test_customers_lifetime_value
+    description: >
+      Verify that customer_lifetime_value is correctly calculated as the
+      sum of all payment amounts for a customer's orders.
+    model: customers
+    versions:
+      include: [1]
+    given:
+      - input: ref('stg_customers')
+        rows:
+          - { customer_id: 1, first_name: "Alice", last_name: "A" }
+      - input: ref('stg_orders')
+        rows:
+          - { order_id: 1, customer_id: 1, order_date: "2024-01-01", status: "completed" }
+          - { order_id: 2, customer_id: 1, order_date: "2024-02-01", status: "completed" }
+      - input: ref('stg_payments')
+        rows:
+          - { payment_id: 1, order_id: 1, payment_method: "credit_card", amount: 10.00 }
+          - { payment_id: 2, order_id: 2, payment_method: "coupon", amount: 25.50 }
+    expect:
+      rows:
+        - customer_id: 1
+          first_name: "Alice"
+          last_name: "A"
+          first_order: "2024-01-01"
+          most_recent_order: "2024-02-01"
+          number_of_orders: 2
+          customer_lifetime_value: 35.50
+
+  - name: test_customers_no_orders
+    description: >
+      Verify that a customer with no orders has null aggregates.
+    model: customers
+    versions:
+      include: [1]
+    given:
+      - input: ref('stg_customers')
+        rows:
+          - { customer_id: 99, first_name: "Bob", last_name: "B" }
+      - input: ref('stg_orders')
+        rows: []
+      - input: ref('stg_payments')
+        rows: []
+    expect:
+      rows:
+        - customer_id: 99
+          first_name: "Bob"
+          last_name: "B"
+          first_order: null
+          most_recent_order: null
+          number_of_orders: null
+          customer_lifetime_value: null
