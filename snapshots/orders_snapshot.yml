@@ -13,6 +13,12 @@ snapshots:
       check_cols:
         - status
       hard_deletes: invalidate
+      snapshot_meta_column_names:
+        dbt_valid_from: valid_from_ts
+        dbt_valid_to: valid_to_ts
+        dbt_scd_id: scd_id
+        dbt_updated_at: updated_at_ts
+        dbt_is_deleted: is_deleted
     columns:
       - name: id
         description: Unique order identifier from the source system.
@@ -28,9 +34,15 @@ snapshots:
           - accepted_values:
               arguments:
                 values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
-      - name: dbt_valid_from
-        description: Timestamp when this snapshot row became valid.
-      - name: dbt_valid_to
+      - name: valid_from_ts
+        description: Timestamp when this snapshot row became valid (renamed from dbt_valid_from).
+      - name: valid_to_ts
         description: >
-          Timestamp when this snapshot row was superseded.
-          NULL for the current record.
+          Timestamp when this snapshot row was superseded
+          (renamed from dbt_valid_to). NULL for the current record.
+      - name: scd_id
+        description: Surrogate key for the snapshot row (renamed from dbt_scd_id).
+      - name: updated_at_ts
+        description: Timestamp of the snapshot run that produced this row (renamed from dbt_updated_at).
+      - name: is_deleted
+        description: Marker for hard-deleted rows (renamed from dbt_is_deleted).
