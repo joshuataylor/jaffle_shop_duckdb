@@ -1,0 +1,36 @@
+version: 2
+
+snapshots:
+  - name: orders_snapshot
+    description: >
+      Tracks order status changes over time using SCD Type 2.
+      Each row represents a historical state of an order.
+    relation: ref('jaffle_shop', 'raw_orders')
+    config:
+      schema: snapshots
+      unique_key: id
+      strategy: check
+      check_cols:
+        - status
+      hard_deletes: invalidate
+    columns:
+      - name: id
+        description: Unique order identifier from the source system.
+      - name: user_id
+        description: Foreign key to the customer who placed this order.
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: >
+          Current status of the order. One of: placed, shipped,
+          completed, return_pending, returned.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+      - name: dbt_valid_from
+        description: Timestamp when this snapshot row became valid.
+      - name: dbt_valid_to
+        description: >
+          Timestamp when this snapshot row was superseded.
+          NULL for the current record.
