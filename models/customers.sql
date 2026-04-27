@@ -52,8 +52,13 @@ final as (
     select
         {{ dbt_utils.generate_surrogate_key(['customers.customer_id']) }} as customer_key,
         customers.customer_id,
+        {% if var('include_pii', true) %}
         customers.first_name,
         customers.last_name,
+        {% else %}
+        cast(null as varchar) as first_name,
+        cast(null as varchar) as last_name,
+        {% endif %}
         customer_orders.first_order,
         customer_orders.most_recent_order,
         customer_orders.number_of_orders,

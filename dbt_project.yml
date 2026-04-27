@@ -23,6 +23,12 @@ require-dbt-version: [">=1.11.0", "<2.0.0"]
 vars:
   payment_currency: "{{ env_var('DBT_PAYMENT_CURRENCY', 'AUD') }}"
   cents_divisor: 100
+  # Toggle for including PII columns (first_name, last_name) in mart
+  # outputs. Override at runtime with: dbt run --vars '{include_pii: false}'
+  include_pii: true
+  # Number of days of recent data to keep when running in dev. Used by
+  # the limit_data_in_dev() macro. Override with --vars '{dev_data_days: 7}'.
+  dev_data_days: 3
 
 query-comment:
   comment: "dbt: {{ node.unique_id }}"
