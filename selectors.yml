@@ -1,0 +1,16 @@
+selectors:
+  - name: nightly
+    description: All mart models and their tests — used for nightly scheduled runs.
+    definition:
+      method: tag
+      value: marts
+      children:
+        method: fqn
+        value: "*"
+        resource_types: [test]
+
+  - name: staging_only
+    description: All staging models and their tests.
+    definition:
+      method: tag
+      value: staging

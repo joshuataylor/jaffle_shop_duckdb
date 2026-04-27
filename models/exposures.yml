@@ -1,0 +1,30 @@
+version: 2
+
+exposures:
+  - name: weekly_jaffles_dashboard
+    type: dashboard
+    description: >
+      Weekly business performance dashboard showing customer acquisition,
+      order volume, and revenue trends.
+    maturity: high
+    owner:
+      name: Analytics Team
+      email: analytics@jaffleshop.com
+    depends_on:
+      - ref('customers')
+      - ref('orders')
+    tags: ['reporting']
+
+  - name: customer_retention_report
+    type: analysis
+    description: >
+      Monthly report analyzing customer retention and lifetime value
+      for the executive team.
+    maturity: medium
+    owner:
+      name: Analytics Team
+      email: analytics@jaffleshop.com
+    depends_on:
+      - ref('customers')
+      - ref('orders')
+    tags: ['reporting']
