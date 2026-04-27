@@ -1,0 +1,59 @@
+version: 2
+
+macros:
+  - name: cents_to_dollars
+    description: >
+      Converts a column value from cents to dollars by dividing by the
+      project variable `cents_divisor` and rounding to the given precision.
+    arguments:
+      - name: column_name
+        type: column
+        description: The column containing a value in cents.
+      - name: precision
+        type: integer
+        description: Number of decimal places to round to. Default is 2.
+
+  - name: example_input
+    description: >
+      Demo macro that outputs a number. Useful as a minimal example of
+      macro argument handling.
+    arguments:
+      - name: my_number
+        type: number
+        description: The number to output. Default is 42.
+
+  - name: generate_schema_name
+    description: >
+      Custom schema naming macro that overrides the dbt default. When a
+      custom schema is configured, the resulting schema is
+      `<default_schema>_<custom_schema_name>`; otherwise the default
+      schema is used as-is.
+    arguments:
+      - name: custom_schema_name
+        type: string
+        description: The custom schema name provided via dbt model config. None when not set.
+      - name: node
+        type: object
+        description: The dbt node object, provided automatically by dbt.
+
+  - name: limit_data_in_dev
+    description: >
+      Adds a WHERE clause that limits data to recent days when running
+      against the dev target. No-op in non-dev targets.
+    arguments:
+      - name: column_name
+        type: column
+        description: The date column to filter on.
+      - name: dev_days_of_data
+        type: integer
+        description: Number of days of data to include in dev. Default is 3.
+
+  - name: log_table_row_counts
+    description: >
+      Run-operation macro that logs row counts for mart models
+      (customers, orders). Usage: `dbt run-operation log_table_row_counts`.
+
+  - name: payment_methods
+    description: >
+      Returns a list of valid payment methods: credit_card, coupon,
+      bank_transfer, and gift_card.
