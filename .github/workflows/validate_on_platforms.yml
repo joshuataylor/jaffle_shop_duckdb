@@ -22,6 +22,7 @@ jobs:
             source .venv/bin/activate
             which dbt
             dbt --version
+            dbt deps
             dbt debug
             dbt build
             dbt docs generate
@@ -43,6 +44,7 @@ jobs:
             source .venv/bin/activate
             which dbt
             dbt --version
+            dbt deps
             dbt debug
             dbt build
             dbt docs generate
@@ -62,6 +64,7 @@ jobs:
           run: |
             uv sync
             uv run dbt --version
+            uv run dbt deps
             uv run dbt debug
             uv run dbt build
             uv run dbt docs generate
@@ -81,6 +84,7 @@ jobs:
           run: |
             uv sync
             uv run dbt --version
+            uv run dbt deps
             uv run dbt debug
             uv run dbt build
             uv run dbt docs generate
@@ -102,6 +106,7 @@ jobs:
             .venv\Scripts\activate.bat
             where dbt
             dbt --version
+            dbt deps
             dbt debug
             dbt build
             dbt docs generate
