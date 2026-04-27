@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 with customers as (
 
     select * from {{ ref('stg_customers') }}
@@ -48,6 +50,7 @@ customer_payments as (
 final as (
 
     select
+        {{ dbt_utils.generate_surrogate_key(['customers.customer_id']) }} as customer_key,
         customers.customer_id,
         customers.first_name,
         customers.last_name,

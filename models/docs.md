@@ -12,3 +12,24 @@ Orders can be one of the following statuses:
 
 
 {% enddocs %}
+
+{% docs payment_methods %}
+
+Payments can be made using one of the following methods:
+
+| method         | description                                      |
+|----------------|--------------------------------------------------|
+| credit_card    | Payment via credit card                          |
+| coupon         | Payment via a coupon or promotional code         |
+| bank_transfer  | Payment via direct bank transfer                 |
+| gift_card      | Payment via a gift card                          |
+
+{% enddocs %}
+
+{% docs customer_lifetime_value %}
+
+The total value (in AUD) of all orders placed by a customer over their
+lifetime. Calculated as the sum of all payment amounts associated with
+the customer's orders, converted from cents to dollars.
+
+{% enddocs %}
