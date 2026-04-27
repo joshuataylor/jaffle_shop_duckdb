@@ -1,0 +1,62 @@
+[tools]
+python = { version = '3.13.13', create = false }
+uv = "latest"
+
+[[env]]
+_.python.venv = { path = ".venv" }
+PIP_REQUIRE_VIRTUALENV = "true"
+# DBT_SINGLE_THREADED = 1 # Use when debugging.
+DBT_PROJECT_DIR = "{{config_root}}"
+DBT_PROFILES_DIR = "{{config_root}}"
+UV_COMPILE_BYTECODE = 1
+UV_LINK_MODE = "copy"
+DBT_MACRO_DEBUGGING = 1
+# dbt
+[tasks."dbt:clean"]
+description = "Clean the dbt-duckdb project, by removing target, dbt_packages, logs"
+run = "rm -rf target dbt_packages logs"
+
+[tasks."dbt:seed"]
+description = "Seed the project"
+run = "dbt seed"
+
+# [tasks."dbt:deps"]
+# description = "Install the dbt dependencies"
+# run = "dbt deps"
+
+[tasks."dbt:debug"]
+description = "Shows dbt debug information to ensure the project is setup correctly"
+run = "dbt debug"
+
+[tasks."dbt:build"]
+description = "Runs dbt build"
+run = "dbt build"
+
+[tasks.dbt]
+description = "Runs dbt seed and build"
+depends = ["dbt:debug", "dbt:seed", "dbt:build"]
+
+[tasks."venv_setup"]
+depends = ["venv_rm", "pycache_clean", "venv_create"]
+
+[tasks."venv_create"]
+run = "uv venv --python=$(mise which python) --link-mode=copy --refresh --seed"
+
+[tasks."pycache_clean"]
+run = "fd --base-directory={{config_root}} -u --type=d -g __pycache__ -x rm -rf"
+
+[tasks."venv_rm"]
+run = "rm -rf .venv"
+
+[tasks."uv_lock"]
+dir = "{{config_root}}"
+run = "uv lock --link-mode copy --python=./.venv/bin/python"
+sources = ["pyproject.toml"]
+outputs = ["uv.lock"]
+
+[tasks."uv_full"]
+run = "uv sync --all-packages --reinstall"
+
+[tasks."setup"]
+depends = ["venv_rm", "pycache_clean", "venv_create", "uv_full"]
+dir = "{{config_root}}"
