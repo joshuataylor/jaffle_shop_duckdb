@@ -44,6 +44,8 @@ models:
     +persist_docs:
       relation: true
       columns: true
+    +grants:
+      select: ['analytics_reader']
     staging:
       +materialized: view
       +schema: staging
