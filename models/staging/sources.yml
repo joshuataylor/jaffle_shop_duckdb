@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: jaffle_shop
+    description: >
+      Raw data loaded via dbt seeds. Note: staging models use ref() for seeds,
+      not source(). This source definition exists to demonstrate source YAML
+      configuration, column documentation, and source freshness features.
+    tables:
+      - name: raw_customers
+        description: Raw customer data with basic profile information.
+        columns:
+          - name: id
+            description: Primary key for customers.
+          - name: first_name
+            description: Customer's first name.
+          - name: last_name
+            description: Customer's last name.
+      - name: raw_orders
+        description: Raw order data with status tracking.
+        # Source freshness demonstration — since seeds are static CSVs,
+        # this will always report as stale. In a real project the
+        # loaded_at_field would reference a true ingestion timestamp.
+        loaded_at_field: order_date
+        freshness:
+          warn_after: { count: 24, period: hour }
+          error_after: { count: 72, period: hour }
+        columns:
+          - name: id
+            description: Primary key for orders.
+          - name: user_id
+            description: Foreign key to raw_customers.
+          - name: order_date
+            description: Date the order was placed.
+          - name: status
+            description: Current order status.
+      - name: raw_payments
+        description: Raw payment transactions in cents.
+        columns:
+          - name: id
+            description: Primary key for payments.
+          - name: order_id
+            description: Foreign key to raw_orders.
+          - name: payment_method
+            description: Payment method used (credit_card, coupon, bank_transfer, gift_card).
+          - name: amount
+            description: Payment amount in cents.

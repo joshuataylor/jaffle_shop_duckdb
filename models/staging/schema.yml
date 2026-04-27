@@ -2,32 +2,87 @@ version: 2
 
 models:
   - name: stg_customers
+    description: Cleaned customer data with renamed columns from the raw_customers seed.
+    config:
+      tags: ['staging']
     columns:
       - name: customer_id
-        tests:
+        description: Primary key — renamed from `id` in raw source.
+        data_tests:
           - unique
           - not_null
+      - name: first_name
+        description: Customer's first name.
+        data_tests:
+          - dbt_utils.not_empty_string
+      - name: last_name
+        description: Customer's last name.
+        data_tests:
+          - dbt_utils.not_empty_string
 
   - name: stg_orders
+    description: Cleaned order data with renamed columns from the raw_orders seed. Applies dev data limiting.
+    config:
+      tags: ['staging']
     columns:
       - name: order_id
-        tests:
+        description: Primary key — renamed from `id` in raw source.
+        data_tests:
           - unique
           - not_null
+      - name: customer_id
+        description: Foreign key to stg_customers — renamed from `user_id` in raw source.
+      - name: order_date
+        description: Date (UTC) the order was placed.
       - name: status
-        tests:
+        description: Current order status.
+        data_tests:
           - accepted_values:
               arguments:
                 values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
 
   - name: stg_payments
+    description: Cleaned payment data with renamed columns and amount converted from cents to dollars.
+    config:
+      tags: ['staging']
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - payment_id
+              - order_id
     columns:
       - name: payment_id
-        tests:
+        description: Primary key — renamed from `id` in raw source.
+        data_tests:
           - unique
           - not_null
+          - dbt_utils.at_least_one
+      - name: order_id
+        description: Foreign key to stg_orders.
       - name: payment_method
-        tests:
+        description: '{{ doc("payment_methods") }}'
+        data_tests:
           - accepted_values:
               arguments:
                 values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
+      - name: amount
+        description: Payment amount in AUD (converted from cents).
+
+  - name: int_order_payments
+    description: >
+      Ephemeral intermediate model joining orders with payment totals.
+      Injected as a CTE — never materialized in the warehouse.
+    columns:
+      - name: order_id
+        description: Primary key — unique order identifier.
+      - name: customer_id
+        description: Foreign key to stg_customers.
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: Current order status.
+      - name: total_payment_amount
+        description: Sum of all payment amounts for this order.
+      - name: payment_count
+        description: Number of payments for this order.
