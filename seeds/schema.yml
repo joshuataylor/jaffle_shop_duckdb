@@ -1,0 +1,66 @@
+version: 2
+
+seeds:
+  - name: raw_customers
+    description: Raw customer records. Each row is a unique customer.
+    config:
+      column_types:
+        id: integer
+        first_name: varchar
+        last_name: varchar
+    columns:
+      - name: id
+        description: Primary key for customers.
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: Customer's first name.
+      - name: last_name
+        description: Customer's last name.
+
+  - name: raw_orders
+    description: Raw order records. Each row is a unique order placed by a customer.
+    config:
+      column_types:
+        id: integer
+        user_id: integer
+        order_date: date
+        status: varchar
+    columns:
+      - name: id
+        description: Primary key for orders.
+        data_tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: Foreign key to raw_customers.
+        data_tests:
+          - not_null
+      - name: order_date
+        description: Date the order was placed.
+      - name: status
+        description: Current order status.
+
+  - name: raw_payments
+    description: Raw payment records. Each row is a payment against an order (one order can have multiple payments).
+    config:
+      column_types:
+        id: integer
+        order_id: integer
+        payment_method: varchar
+        amount: integer
+    columns:
+      - name: id
+        description: Primary key for payments.
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to raw_orders.
+        data_tests:
+          - not_null
+      - name: payment_method
+        description: Payment method used.
+      - name: amount
+        description: Payment amount in cents.
