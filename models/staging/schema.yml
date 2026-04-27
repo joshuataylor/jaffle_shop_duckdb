@@ -73,6 +73,8 @@ models:
     description: >
       Ephemeral intermediate model joining orders with payment totals.
       Injected as a CTE — never materialized in the warehouse.
+    docs:
+      show: false
     columns:
       - name: order_id
         description: Primary key — unique order identifier.
