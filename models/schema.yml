@@ -71,6 +71,8 @@ models:
     columns:
       - name: order_id
         data_type: integer
+        constraints:
+          - type: primary_key
         data_tests:
           - unique:
               config:
@@ -82,6 +84,13 @@ models:
 
       - name: customer_id
         data_type: integer
+        constraints:
+          # not_null is enforced by DuckDB at create time. A foreign_key
+          # constraint to customers(customer_id) would require a primary
+          # key or unique constraint on customers, which would require
+          # contracting that model too. Use the relationships data test
+          # below for portable cross-platform foreign key validation.
+          - type: not_null
         description: Foreign key to the customers table
         data_tests:
           - not_null:
@@ -96,10 +105,17 @@ models:
 
       - name: order_date
         data_type: date
+        constraints:
+          - type: not_null
         description: Date (UTC) that the order was placed
 
       - name: status
         data_type: varchar
+        constraints:
+          - type: not_null
+          - type: check
+            name: orders_status_check
+            expression: "status in ('placed', 'shipped', 'completed', 'return_pending', 'returned')"
         description: '{{ doc("orders_status") }}'
         data_tests:
           - accepted_values:
@@ -108,6 +124,10 @@ models:
 
       - name: amount
         data_type: double
+        constraints:
+          - type: check
+            name: orders_amount_non_negative
+            expression: "amount >= 0"
         description: Total amount (AUD) of the order
         data_tests:
           - not_null:
