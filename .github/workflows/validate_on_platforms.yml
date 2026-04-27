@@ -2,9 +2,9 @@ name: Platform Validation
 
 on:
   push:
-    branches: [duckdb]
+    branches: [duckdb, datamancer-testing]
   pull_request:
-    branches: [duckdb]
+    branches: [duckdb, datamancer-testing]
 
 jobs:
   build-macos:
